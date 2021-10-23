@@ -1,6 +1,38 @@
-import { message } from './myModule';
-import myAddFunction, { subtract} from './math';
+import { GraphQLServer } from 'graphql-yoga';
 
-console.log(message);
-console.log(`sum: 3 + 5 = ${myAddFunction(3,5)}`);
-console.log(`substract: 3 + 5 = ${subtract(3,5)}`);
+// Type definitions (schema)
+const typeDefs = `
+    type Query {
+        hello: String!
+        name: String!
+        location: String!
+        bio: String!
+    }
+`
+
+// Resolvers (function for each operation)
+const resolvers = {
+    Query: {
+        hello() {
+            return 'This is my first query!'
+        },
+        name() {
+            return "Yuka"
+        },
+        location() {
+            return "São Paulo"
+        },
+        bio() {
+            return "Programmer learning GraphQL"
+        }
+    }
+}
+
+const server = new GraphQLServer({
+    typeDefs,
+    resolvers
+})
+
+server.start(() => {
+    console.log('The server is up! Open in the browser: localhost:4000');
+})

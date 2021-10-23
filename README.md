@@ -16,6 +16,5 @@ Open in the browser: http://localhost:4000/
 ```
 query {
     hello
-    name
 }
 ```

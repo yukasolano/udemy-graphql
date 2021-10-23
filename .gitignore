@@ -20,3 +20,4 @@
 # is commented out by default.
 .vscode/
 
+*/node_modules

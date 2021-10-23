@@ -43,7 +43,7 @@ const resolvers = {
             return 400
         },
         releaseYear() {
-            return null
+            return 2010
         },
         rating() {
             return 8.0

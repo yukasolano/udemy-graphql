@@ -2,12 +2,46 @@ import { GraphQLServer } from 'graphql-yoga';
 
 // Scalar types: String, Boolean, Int, Float, ID
 
+// Demo user data
+const users = [{
+    id: '1',
+    name: 'Yuka',
+    email: 'yuka@example.com',
+    age: 30
+}, {
+    id: '2',
+    name: 'Luiz',
+    email: 'luiz@example.com',
+}, {
+    id: '3',
+    name: 'Mike',
+    email: 'mike@example.com',
+    age: 27
+}]
+
+const posts = [{
+    id: '11',
+    title: 'Post 1',
+    body: '',
+    published: false
+}, {
+    id: '12',
+    title: 'Post 2',
+    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+    published: true
+}, {
+    id: '13',
+    title: 'Post 3',
+    body: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium',
+    published: true
+}]
+
+
 // Type definitions (schema)
 const typeDefs = `
     type Query {
-        greeting(name: String): String!
-        add(numbers: [Float!]!): Float!
-        grades: [Int!]!
+        users(query: String): [User!]!
+        posts(query: String): [Post!]!
         me: User!
         post: Post
     }
@@ -30,23 +64,22 @@ const typeDefs = `
 // Resolvers (function for each operation)
 const resolvers = {
     Query: {
-        greeting(parent, args, context, info) {
-            if(args.name) {
-                return `Hello, ${args.name}`
+        users(parent, args, context, info) {
+            if(!args.query) {
+                return users
             }
-            return 'Hello'
+            return users.filter((user) => {
+                return user.name.toLowerCase().includes(args.query.toLowerCase())
+            }) 
         },
-        add(parent, args, context, info) {
-            if(args.numbers.length === 0) {
-                return 0
+        posts(parent, args, context, info) {
+            if(!args.query) {
+                return posts
             }
-
-            return  args.numbers.reduce((accumulator, currentValue) => {
-                return accumulator + currentValue
-            })
-        },
-        grades(parent, args, context, info) {
-            return [3, 5, 7]
+            return posts.filter((post) => {
+                return post.title.toLowerCase().includes(args.query.toLowerCase()) 
+                    || post.body.toLowerCase().includes(args.query.toLowerCase())
+            }) 
         },
         me() {
             return {

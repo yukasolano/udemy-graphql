@@ -14,7 +14,19 @@ npm run start
 
 Open in the browser: http://localhost:4000/
 ```
-query {
-    hello
+{
+  posts {
+    id
+    title 
+    author {
+      name
+    }
+    comments {
+      text 
+      author {
+        name
+      }
+    }
+  }
 }
 ```

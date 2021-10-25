@@ -30,3 +30,11 @@ Open in the browser: http://localhost:4000/
   }
 }
 ```
+```
+mutation {
+  createUser(name: "Nona", email: "nona@email.com") {
+    id
+    name
+  }
+}
+```

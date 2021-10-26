@@ -3,7 +3,7 @@
 Link to the course: https://www.udemy.com/course/graphql-bootcamp
 
 
-## GraphQL Basiscs
+## GraphQL Basics
 
 ### Getting start
 ```

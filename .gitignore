@@ -21,3 +21,4 @@
 .vscode/
 
 */node_modules
+/graphql-prisma/prisma/docker-compose.yml

@@ -11,14 +11,29 @@ datasource db {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
+  id      String      @id @default(uuid())
   name    String
-  profile Profile?
+  email   String
+  age     Int?
+  posts   Post[]
+  comments Comment[]
 }
 
-model Profile {
-  id       Int    @id @default(autoincrement())
-  biograpy String // Intentional typo!
-  userId   Int
-  user     User   @relation(fields: [userId], references: [id])
+model Post {
+  id      String      @id @default(uuid())
+  title   String
+  body    String
+  published Boolean
+  author  User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  comments Comment[]
+}
+
+model Comment {
+  id      String      @id @default(uuid())
+  text    String
+  author  User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String
+  post    Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
 }

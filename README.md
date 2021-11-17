@@ -77,3 +77,10 @@ prisma version 3.4.2
 2. Set the provider of the datasource block in schema.prisma to match your database: postgresql, mysql, sqlite, sqlserver or mongodb (Preview).
 3. Run prisma db pull to turn your database schema into a Prisma schema. (prisma db push for the opposite)
 4. Run prisma generate to generate the Prisma Client. You can then start querying your database.
+
+SELECT * FROM public."Profile"
+ORDER BY id ASC LIMIT 100
+
+ npx prisma generate  
+ prisma generate
+ prisma db push

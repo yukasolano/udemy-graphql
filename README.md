@@ -81,6 +81,8 @@ prisma version 3.4.2
 SELECT * FROM public."Profile"
 ORDER BY id ASC LIMIT 100
 
+
+nvm use v14.17.6
  npx prisma generate  
  prisma generate
  prisma db push

@@ -12,14 +12,15 @@ const Query = {
             }
         })
     },
-    posts(parent, args, { db }, info) {
-        if(!args.query) {
-            return db.posts
-        }
-        return db.posts.filter((post) => {
-            return post.title.toLowerCase().includes(args.query.toLowerCase()) 
-                || post.body.toLowerCase().includes(args.query.toLowerCase())
-        }) 
+    async posts(parent, args, { prisma }, info) {
+        // if(!args.query) {
+        //     return db.posts
+        // }
+        // return db.posts.filter((post) => {
+        //     return post.title.toLowerCase().includes(args.query.toLowerCase()) 
+        //         || post.body.toLowerCase().includes(args.query.toLowerCase())
+        // }) 
+        return await prisma.post.findMany({include: { author: true}})
     },
     me() {
         return {

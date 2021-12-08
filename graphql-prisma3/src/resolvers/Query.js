@@ -2,44 +2,33 @@ const Query = {
     async users(parent, args, { prisma }, info) {
 
         if(!args.query) {
-            return await prisma.user.findMany()
+            return await prisma.user.findMany({include: { posts: true, comments: true }})
         }
         return await prisma.user.findMany({
             where: {
                 name: {
                     contains: args.query
                 }
-            }
+            },
+            include: { posts: true, comments: true }
         })
     },
     async posts(parent, args, { prisma }, info) {
-        // if(!args.query) {
-        //     return db.posts
-        // }
-        // return db.posts.filter((post) => {
-        //     return post.title.toLowerCase().includes(args.query.toLowerCase()) 
-        //         || post.body.toLowerCase().includes(args.query.toLowerCase())
-        // }) 
-        return await prisma.post.findMany({include: { author: true}})
-    },
-    me() {
-        return {
-            id: 'abc123',
-            name: 'Lu',
-            email: 'lu@example.com',
-            age: 30
+
+        if(!args.query) {
+            return await prisma.post.findMany({include: { author: true, comments: true}})
         }
+        return await prisma.post.findMany({
+            include: { author: true, comments: true },
+            where: {
+                title: {
+                    contains: args.query
+                }
+            }
+        })
     },
-    post() {
-        return {
-            id: '001',
-            title: 'Post 1',
-            body: '',
-            published: false
-        }
-    },
-    comments(parent, args, { db }, info) {
-        return db.comments
+    async comments(parent, args, { prisma }, info) {
+        return await prisma.comment.findMany({include: { author: true, post: true}})
     }
 }
 

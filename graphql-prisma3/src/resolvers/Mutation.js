@@ -51,30 +51,34 @@ const Mutation = {
             }
         })
 
-        if (post.published)[
+        if (post.published){
             pubsub.publish('post', {
                 post: {
                     mutation: 'CREATED',
                     data: post
                 }
             })
-        ]
+        }
 
         return post
     },
-    deletePost(parent, args, {
-        db,
-        pubsub
-    }, info) {
-        const postIndex = db.posts.findIndex((post) => post.id === args.id)
+    async deletePost(parent, args, { prisma, pubsub }, info) {
+        await findPost(prisma, args.id)
+        const post =  await prisma.post.delete({
+            where: {
+                id: args.id
+            }
+        })
 
-        if (postIndex === -1) {
-            throw new Error('Post not found')
-        }
+        // const postIndex = db.posts.findIndex((post) => post.id === args.id)
 
-        const [post] = db.posts.splice(postIndex, 1)
+        // if (postIndex === -1) {
+        //     throw new Error('Post not found')
+        // }
 
-        db.comments = db.comments.filter((comment) => comment.post !== args.id)
+        // const [post] = db.posts.splice(postIndex, 1)
+
+        // db.comments = db.comments.filter((comment) => comment.post !== args.id)
 
         if (post.published) {
             pubsub.publish('post', {
@@ -139,33 +143,49 @@ const Mutation = {
 
         return post
     },
-    createComment(parent, args, {
-        db,
-        pubsub
-    }, info) {
-        const userExist = db.users.some((user) => user.id === args.data.author)
+    async createComment(parent, args, { prisma, pubsub }, info) {
+        const user = await findUser(prisma, args.data.author)
 
-        if (!userExist) {
-            throw new Error('User not found.')
-        }
-
-        const postPublished = db.posts.some((post) => post.id === args.data.post && post.published)
+        const postPublished = await prisma.post.findFirst({
+            where: {
+                id: args.data.post,
+                published: true
+            }
+        })
 
         if (!postPublished) {
             throw new Error('Post not published.')
         }
 
-        const comment = {
-            id: uuidv4(),
-            ...args.data
-        }
-        db.comments.push(comment)
+        const comment = await prisma.comment.create({
+            data: {
+                ...args.data,
+                author: {
+                    connect: {
+                        id: args.data.author
+                    }
+                },
+                post: {
+                    connect: {
+                        id: args.data.post
+                    }
+                }
+            },
+            include: {
+                author: true,
+                post: true
+            }
+        })
+
+        
         pubsub.publish(`comment ${ args.data.post}`, {
             comment: {
                 mutation: 'CREATED',
                 data: comment
             }
         })
+        
+
         return comment
     },
     deleteComment(parent, args, {
@@ -240,4 +260,17 @@ async function emailTaken(prisma, email) {
     if (emailTaken) {
         throw new Error('Email taken.')
     }
+}
+
+async function findPost(prisma, id) {
+    const post = await prisma.post.findUnique({
+        where: {
+            id: id
+        }
+    })
+
+    if (!post) {
+        throw new Error('Post not found')
+    }
+    return post
 }
